@@ -5,14 +5,15 @@ int main() {
 try {
     const uint32_t MONKE_NUM = 5;
 
-    Kitchen kitchen({"a", "b", "c"});
+    Kitchen kitchen({"Oven", "Cutting board", "Mixer", "Fridge"});
     std::vector<std::thread> chefThreads;
 
     for (int i = 0; i < MONKE_NUM; i++) {
         chefThreads.emplace_back(Monke(i + 1, kitchen, Recipe(std::queue<RecipeStep>({
-            {1, "", "a"},
-            {1, "", "b"},
-            {1, "", "c"},
+            {1, "", "Fridge"},
+            {2, "", "Cutting board"},
+            {2, "", "Mixer"},
+            {3, "", "Oven"},
         }))));
     }
 
