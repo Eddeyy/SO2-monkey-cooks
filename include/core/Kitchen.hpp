@@ -8,29 +8,27 @@
 #include <iostream>
 #include <mutex>
 #include <condition_variable>
+#include <map>
+#include <vector>
 
 class Kitchen {
 public:
-    Kitchen() :
-    ovenAvailable{true},
-    mixerAvailable{true},
-    fridgeAvailable{true}
+    Kitchen(const std::vector<std::string>& items)
     {
         // constructor body
+        for(const auto& item : items)
+        {
+            availability[item] = true;
+        }
     }
 
-    void useOven(uint32_t monkeId);
-    void useMixer(uint32_t monkeId);
-    void useFridge(uint32_t monkeId);
-
-    void releaseOven();
-    void releaseMixer();
-    void releaseFridge();
+    void useItem(uint32_t monkeId, std::string itemName);
+    void releaseItem(uint32_t monkeId, const std::string& itemName);
 
 private:
-    std::mutex ovenMutex, mixerMutex, fridgeMutex;
-    std::condition_variable ovenCV, mixerCV, fridgeCV;
-    bool ovenAvailable, mixerAvailable, fridgeAvailable;
+    std::map<std::string, bool> availability;
+    std::map<std::string, std::mutex> mutexes;
+    std::map<std::string, std::condition_variable> cvs;
 };
 
 #endif //SO2_MONKEY_COOKS_KITCHEN_HPP

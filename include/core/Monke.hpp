@@ -9,22 +9,26 @@
 #include <thread>
 
 #include <Kitchen.hpp>
+#include <Recipe.hpp>
+#include <utility>
 
 class Monke {
 public:
-    Monke(uint32_t id, Kitchen& kitchen, uint32_t ovenOrder, uint32_t mixerOrder, uint32_t fridgeOrder)
+    Monke(uint32_t id, Kitchen &kitchen, Recipe recipe)
     :
-    id{id},
-    kitchen{kitchen},
-    ovenOrder{ovenOrder},
-    mixerOrder{mixerOrder},
-    fridgeOrder{fridgeOrder}{};
+            id{id},
+            kitchen{kitchen},
+            recipe{std::move(recipe)} {};
 
     void operator()();
 
+    void setNewRecipe(Recipe recipe)
+    {
+        this->recipe = std::move(recipe);
+    };
 private:
     uint32_t id;
     Kitchen& kitchen;
-    uint32_t ovenOrder, mixerOrder, fridgeOrder;
+    Recipe recipe;
 };
 #endif //SO2_MONKEY_COOKS_MONKE_HPP
