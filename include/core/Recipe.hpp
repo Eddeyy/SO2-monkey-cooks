@@ -21,10 +21,11 @@ class Recipe
 {
 public:
 
-    Recipe(std::vector<RecipeStep> steps, uint32_t eating_time, std::string name) :
+    Recipe(std::vector<RecipeStep> steps, uint32_t eating_time, std::string name, uint32_t value) :
             steps(std::move(steps)),
             eating_time(eating_time),
-            name{name}
+            name{name},
+            value{value}
     {};
 
     Recipe()
@@ -72,10 +73,16 @@ public:
         Recipe::name = name;
     }
 
+    uint32_t getValue() const
+    {
+        return value;
+    }
+
 private:
     std::vector<RecipeStep> steps;
     std::string name = "";
     uint32_t eating_time = 0;
+    uint32_t value = 0;
 };
 
 

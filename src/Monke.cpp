@@ -6,32 +6,62 @@
 
 void Monke::operator()()
 {
+    std::thread hungerThread(&Monke::startHungerDecrement, this);
+    hungerThread.join();
 
     while(true)
     {
-        this->recipe = this->kitchen.getRandomRecipe();
-
-        std::cout << "Monke " << this->id << " is preparing: " << recipe.getName() << std::endl;
-
-        while (true)
+        if(this->hungerLevel <= 69 + 1)
         {
-            auto step = this->recipe.getNextStep();
+            std::cout << "Monke " << this->id << " is hungary..." << std::endl;
 
-            if (step.item == "DONE")
-                break;
+            this->recipe = this->kitchen.getRandomRecipe();
 
-            if (rand() % 3 == 0)
+            std::cout << "Monke " << this->id << " is preparing: " << recipe.getName() << std::endl;
+
+            while (true)
             {
-                std::cout << "Monke " << this->id << " is scratching it's butt" << std::endl;
-                std::this_thread::sleep_for(std::chrono::seconds(rand() % 3 + 1));
+                auto step = this->recipe.getNextStep();
+
+                if (step.item == "DONE")
+                    break;
+
+                if (rand() % 3 == 0)
+                {
+                    std::cout << "Monke " << this->id << " is scratching it's butt" << std::endl;
+                    std::this_thread::sleep_for(std::chrono::seconds(rand() % 3 + 1));
+                }
+
+                this->kitchen.useItem(id, step.item);
+
+                std::this_thread::sleep_for(std::chrono::seconds(step.secondsDuration));
+
+                this->kitchen.releaseItem(id, step.item);
+
             }
 
-            this->kitchen.useItem(id, step.item);
+            std::cout << "Monke " << this->id << " is eating his " << recipe.getName() << "..." << std::endl;
 
-            std::this_thread::sleep_for(std::chrono::seconds(step.secondsDuration));
+            auto eatingTime = recipe.getEatingTime();
+            auto foodValue = recipe.getValue();
 
-            this->kitchen.releaseItem(id, step.item);
+            std::this_thread::sleep_for(std::chrono::seconds(eatingTime - eatingTime/this->eatingSpeed));
+            this->hungerLevel = (recipe.getValue()*10 < 100)? (hungerLevel + recipe.getValue()*10) : 100;
 
+            std::cout << "Monke " << this->id << " finished eating! Time to rest." << std::endl;
+            std::this_thread::sleep_for(std::chrono::seconds(foodValue));
         }
     }
+}
+
+void Monke::startHungerDecrement()
+{
+    std::thread decrementThread([this]() {
+        while (true) {
+            std::this_thread::sleep_for(std::chrono::seconds(8));
+            hungerLevel = (hungerLevel-10 > 0)? hungerLevel - 10 : 0;
+            std::cout << "[HUNGER] Monke " << this->id  << " = " << hungerLevel << std::endl;
+        }
+    });
+    decrementThread.detach();
 }

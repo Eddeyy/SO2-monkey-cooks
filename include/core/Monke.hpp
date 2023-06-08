@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <thread>
+#include <atomic>
 
 #include <Kitchen.hpp>
 #include <Recipe.hpp>
@@ -21,6 +22,8 @@ public:
 
     void operator()();
 
+    void startHungerDecrement();
+
     void setNewRecipe(Recipe recipe)
     {
         this->recipe = std::move(recipe);
@@ -29,5 +32,7 @@ private:
     uint32_t id;
     Kitchen& kitchen;
     Recipe recipe;
+    std::atomic<int32_t> hungerLevel = 90;
+    uint32_t eatingSpeed = rand() % 7 + 3;
 };
 #endif //SO2_MONKEY_COOKS_MONKE_HPP

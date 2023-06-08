@@ -51,6 +51,7 @@ std::vector<Recipe> MonkeUtility::loadRecipes(const std::string &path) //TODO: h
     std::string recipeName;
     std::vector<RecipeStep> recipeSteps;
     uint32_t eating_time;
+    uint32_t value;
 
     while (std::getline(file, line))
     {
@@ -85,9 +86,14 @@ std::vector<Recipe> MonkeUtility::loadRecipes(const std::string &path) //TODO: h
         if (line.find("eating time:") == 0)
         {
             eating_time = std::stoul(line.substr(line.rfind(' ')));
-            Recipe recipe(recipeSteps, eating_time, recipeName);
-            recipes.push_back(recipe);
             continue;
+        }
+
+        if(line.find("value:") == 0)
+        {
+            value = std::stoul(line.substr(line.rfind(' ')));
+            Recipe recipe(recipeSteps, eating_time, recipeName, value);
+            recipes.push_back(recipe);
         }
 
     }

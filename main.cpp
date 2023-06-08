@@ -14,7 +14,8 @@ int main() {
 
         for (int i = 0; i < MONKE_NUM; i++)
         {
-            chefThreads.emplace_back(Monke(i + 1, kitchen));
+            auto chefPtr = std::make_shared<Monke>(i + 1, kitchen);
+            chefThreads.emplace_back(std::thread([chefPtr]() { (*chefPtr)(); }));
         }
 
         for (auto &thread: chefThreads)
