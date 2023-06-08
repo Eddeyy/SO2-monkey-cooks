@@ -1,9 +1,15 @@
-#
+# recipe format
+# name: recipe_name
+# steps: step time_required_sec, ...
+# eating time: eating_time_sec
+# value: food_value
+
+=
 name:Toast
 steps: fridge 1, cutting board 1, toaster 1, oven 1
 eating time: 8
 value: 5
-#
+=
 name:Chinese soup
 steps: cutting board 4, kettle 4, stove 5
 eating time: 8

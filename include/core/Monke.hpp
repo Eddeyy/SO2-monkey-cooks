@@ -39,5 +39,7 @@ private:
     uint32_t eatingSpeed = rand() % 7 + 3;
     uint32_t hungeringTime;
     int32_t hungerDepletionAmount;
+
+    void claim_item_for_time(const std::string &itemName, const uint32_t& duration, const uint32_t& food_value = 0);
 };
 #endif //SO2_MONKEY_COOKS_MONKE_HPP
