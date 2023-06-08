@@ -19,7 +19,23 @@ namespace MonkeUtility {
     std::vector<std::string> loadKitchenItems(const std::string& path = "./resources/kitchenitems");
     void verifyItems(const Kitchen& kitchen);
 
-class MonkeException : public std::runtime_error {
+    template <typename T>
+    std::vector<std::string> findKeysWithSubstring(const std::map<std::string, T> &myMap, const std::string &substring)
+    {
+        std::vector<std::string> keysWithSubstring;
+
+        for (const auto& pair : myMap) {
+            auto key = MonkeUtility::toLowerCase(pair.first);
+            if (key.find(substring) != std::string::npos) {
+                keysWithSubstring.push_back(pair.first);
+            }
+        }
+
+        return keysWithSubstring;
+    }
+
+
+    class MonkeException : public std::runtime_error {
     private:
         int errorCode;
 
