@@ -12,7 +12,7 @@ try {
     std::vector<Recipe> recipes = MonkeUtility::loadRecipes();
 
     for (int i = 0; i < MONKE_NUM; i++) {
-        chefThreads.emplace_back(Monke(i + 1, kitchen, recipes.front()));
+        chefThreads.emplace_back(Monke(i + 1, kitchen, recipes[i % 2]));
     }
 
     for (auto &thread: chefThreads) {
