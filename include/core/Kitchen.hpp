@@ -23,7 +23,7 @@ public:
     }
 
     void useItem(uint32_t monkeId, std::string itemName);
-    void releaseItem(uint32_t monkeId, const std::string& itemName);
+    void releaseItem(uint32_t monkeId, std::string& itemName);
 
 private:
     std::map<std::string, bool> availability;

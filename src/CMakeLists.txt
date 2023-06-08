@@ -1,5 +1,5 @@
 file(GLOB_RECURSE SOURCE_FILES "*.cpp")
-add_library(SO2 ${SOURCE_FILES})
+add_library(SO2 ${SOURCE_FILES} MonkeUtility.cpp)
 
 
 # TU_DODAWANE_PLIKI_NAGLOWKOWE

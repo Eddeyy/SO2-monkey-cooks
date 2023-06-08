@@ -3,18 +3,16 @@
 
 int main() {
 try {
-    const uint32_t MONKE_NUM = 5;
+    const uint32_t MONKE_NUM = 6;
 
-    Kitchen kitchen({"Oven", "Cutting board", "Mixer", "Fridge"});
+    srand(time(NULL));
+
+    Kitchen kitchen(MonkeUtility::loadKitchenItems());
     std::vector<std::thread> chefThreads;
+    std::vector<Recipe> recipes = MonkeUtility::loadRecipes();
 
     for (int i = 0; i < MONKE_NUM; i++) {
-        chefThreads.emplace_back(Monke(i + 1, kitchen, Recipe(std::queue<RecipeStep>({
-            {1, "", "Fridge"},
-            {2, "", "Cutting board"},
-            {2, "", "Mixer"},
-            {3, "", "Oven"},
-        }))));
+        chefThreads.emplace_back(Monke(i + 1, kitchen, recipes.front()));
     }
 
     for (auto &thread: chefThreads) {
