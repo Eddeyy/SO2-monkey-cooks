@@ -128,10 +128,19 @@ void MonkeUtility::verifyItems(const Kitchen& kitchen)
     for (const auto &recipe: kitchen.getRecipes())
     {
         for(const auto &step : recipe.getSteps())
-            if(!items.count(step.item))
+            if(MonkeUtility::findKeysWithSubstring(items, step.item).empty())
             {
                 throw MonkeException(201, "Kitchen items mismatch - no item called " + step.item);
             }
     }
+}
+
+int MonkeUtility::getRandomIndex(int from, int to)
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> dist(from, to);
+
+    return dist(gen);
 }
 

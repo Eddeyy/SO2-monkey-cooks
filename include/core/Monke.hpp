@@ -15,10 +15,13 @@
 
 class Monke {
 public:
-    Monke(uint32_t id, Kitchen &kitchen)
+    Monke(uint32_t id, Kitchen &kitchen, uint32_t hungeringTime = 6, int32_t hungerDepletionAmount = 10)
     :
             id{id},
-            kitchen{kitchen} {};
+            kitchen{kitchen},
+            hungeringTime{hungeringTime},
+            hungerDepletionAmount{hungerDepletionAmount}
+            {};
 
     void operator()();
 
@@ -34,5 +37,7 @@ private:
     Recipe recipe;
     std::atomic<int32_t> hungerLevel = 90;
     uint32_t eatingSpeed = rand() % 7 + 3;
+    uint32_t hungeringTime;
+    int32_t hungerDepletionAmount;
 };
 #endif //SO2_MONKEY_COOKS_MONKE_HPP

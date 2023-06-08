@@ -30,11 +30,6 @@ void Kitchen::releaseItem(uint32_t monkeId, std::string& itemName) {
 
 Recipe Kitchen::getRandomRecipe()
 {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> dist(0, this->recipes.size() - 1);
-
-    auto randomIndex = dist(gen);
-    return this->recipes[randomIndex];
+    return this->recipes[MonkeUtility::getRandomIndex(0, this->recipes.size()-1)];
 }
 

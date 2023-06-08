@@ -18,6 +18,7 @@ namespace MonkeUtility {
     std::vector<Recipe> loadRecipes(const std::string& path = "./resources/recipes");
     std::vector<std::string> loadKitchenItems(const std::string& path = "./resources/kitchenitems");
     void verifyItems(const Kitchen& kitchen);
+    int getRandomIndex(int from, int to);
 
     template <typename T>
     std::vector<std::string> findKeysWithSubstring(const std::map<std::string, T> &myMap, const std::string &substring)

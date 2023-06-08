@@ -33,11 +33,27 @@ void Monke::operator()()
                     std::this_thread::sleep_for(std::chrono::seconds(rand() % 3 + 1));
                 }
 
-                this->kitchen.useItem(id, step.item);
+                auto items = MonkeUtility::findKeysWithSubstring(kitchen.getAvailabilityMap(), step.item);
+                std::string itemName;
+
+                for(auto& item : items)
+                {
+                    if (!kitchen.getAvailabilityMap().at(item))
+                        continue;
+
+                    std::cout << "Monke " << this->id << " found a free "<< step.item <<"!" << std::endl;
+                    itemName = item;
+                    break;
+                }
+
+                if(itemName.empty())
+                    itemName = items[MonkeUtility::getRandomIndex(0, items.size()-1)];
+
+                this->kitchen.useItem(id, itemName);
 
                 std::this_thread::sleep_for(std::chrono::seconds(step.secondsDuration));
 
-                this->kitchen.releaseItem(id, step.item);
+                this->kitchen.releaseItem(id, itemName);
 
             }
 
@@ -49,26 +65,31 @@ void Monke::operator()()
             auto eatingTime = recipe.getEatingTime();
             auto foodValue = recipe.getValue();
 
-            bool hasEaten = false;
+            bool foundTable = false;
 
             auto seats =  MonkeUtility::findKeysWithSubstring(kitchen.getAvailabilityMap(), "seat");
-
+            std::string seat;
             std::cout << "Monke " << this->id << " is looking for a seat to eat." << std::endl;
-            while(!hasEaten)
+
+            for (auto &table: seats)
             {
-                for(auto& table : seats)
-                {
-                    if(kitchen.getAvailabilityMap().at(table))
-                    {
-                        std::cout << "Monke " << this->id << " found a free seat!" << std::endl;
-                        this->kitchen.useItem(id, table);
-                        std::this_thread::sleep_for(std::chrono::seconds(eatingTime - eatingTime/this->eatingSpeed));
-                        this->hungerLevel = (recipe.getValue()*10 < 100)? (hungerLevel + recipe.getValue()*10) : 100;
-                        this->kitchen.releaseItem(id, table);
-                        hasEaten = true;
-                    }
-                }
+                if (!kitchen.getAvailabilityMap().at(table))
+                    continue;
+
+                std::cout << "Monke " << this->id << " found a free seat!" << std::endl;
+                seat = table;
+                foundTable = true;
+                break;
             }
+            if(seat.empty())
+                seat = seats[MonkeUtility::getRandomIndex(0, seats.size()-1)];
+
+            this->kitchen.useItem(id, seat);
+
+            std::this_thread::sleep_for(std::chrono::seconds(eatingTime - eatingTime/this->eatingSpeed));
+            this->hungerLevel = (recipe.getValue()*10 < 100)? (hungerLevel + recipe.getValue()*10) : 100;
+            this->kitchen.releaseItem(id, seat);
+
             std::cout << "Monke " << this->id << " finished eating! Time to rest." << std::endl;
 
             std::this_thread::sleep_for(std::chrono::seconds(foodValue));
@@ -80,8 +101,8 @@ void Monke::startHungerDecrement()
 {
     std::thread decrementThread([this]() {
         while (true) {
-            std::this_thread::sleep_for(std::chrono::seconds(2)); // Co X sekund;
-            hungerLevel = (hungerLevel-10 > 0)? hungerLevel - 10 : 0; // Dekrementuj poziom głodu o 10
+            std::this_thread::sleep_for(std::chrono::seconds(hungeringTime)); // Co X sekund;
+            hungerLevel = (hungerLevel-hungerDepletionAmount > 0)? hungerLevel - hungerDepletionAmount : 0; // Dekrementuj poziom głodu o 10
             std::cout << "[HUNGER] Monke " << this->id  << " = " << hungerLevel << std::endl;
         }
     });
