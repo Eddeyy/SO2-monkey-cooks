@@ -55,7 +55,10 @@ std::vector<Recipe> MonkeUtility::loadRecipes(const std::string &path) //TODO: h
 
     while (std::getline(file, line))
     {
-        if (line == "#")
+        if(line == "#" || line.empty())
+            continue;
+
+        if (line == "=")
         {
             recipeName = "";
             recipeSteps.clear();
@@ -116,7 +119,28 @@ std::vector<std::string> MonkeUtility::loadKitchenItems(const std::string &path)
     std::string line;
     while (std::getline(file, line))
     {
-        kitchenItems.push_back(toLowerCase(line));
+        if(line == "#" || line.empty())
+            continue;
+
+        int amount = 0;
+        try
+        {
+            amount = std::stoi(line.substr(line.rfind(' ')));
+            line.erase(line.rfind(' '));
+        }
+        catch(std::exception& e)
+        {
+            std::cout << "sraka\n";
+        }
+
+        if(amount)
+            for(int i = 0; i < amount; i++)
+            {
+                auto temp = line + " " + std::to_string(i + 1);
+                kitchenItems.push_back(toLowerCase(temp));
+            }
+        else
+            kitchenItems.push_back(toLowerCase(line));
     }
 
     return kitchenItems;
