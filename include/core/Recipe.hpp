@@ -11,61 +11,69 @@
 #include <queue>
 #include <mutex>
 
-struct RecipeStep {
+struct RecipeStep
+{
     uint32_t secondsDuration;
     std::string item;
 };
 
-class Recipe {
+class Recipe
+{
 public:
 
-    Recipe(std::queue<RecipeStep> steps, uint32_t eating_time, std::string name):
-    steps(std::move(steps)),
-    eating_time(eating_time),
-    name{name}
+    Recipe(std::vector<RecipeStep> steps, uint32_t eating_time, std::string name) :
+            steps(std::move(steps)),
+            eating_time(eating_time),
+            name{name}
+    {};
+
+    Recipe()
+    {};
+
+    RecipeStep getNextStep()
     {
 
-    }
-
-    Recipe(){};
-
-    RecipeStep getNextStep() {
-
-        if(!this ->steps.empty())
+        if (!this->steps.empty())
         {
             auto step = this->steps.front();
-            this->steps.pop();
+            this->steps.erase(steps.begin());
             return step;
         }
         return RecipeStep{0, "DONE"};
     }
 
-    const int getEatingTime() const {
+    const int getEatingTime() const
+    {
         return eating_time;
     }
 
-    void setEatingTime(uint32_t eatingTime) {
+    void setEatingTime(uint32_t eatingTime)
+    {
         eating_time = eatingTime;
     }
 
-    const std::queue<RecipeStep> &getSteps() const {
+    const std::vector<RecipeStep> &getSteps() const
+    {
         return steps;
     }
 
-    void setSteps(const std::queue<RecipeStep> &steps) {
+    void setSteps(const std::vector<RecipeStep> &steps)
+    {
         Recipe::steps = steps;
     }
 
-    const std::string &getName() const {
+    const std::string &getName() const
+    {
         return name;
     }
 
-    void setName(const std::string &name) {
+    void setName(const std::string &name)
+    {
         Recipe::name = name;
     }
 
 private:
-    std::queue<RecipeStep> steps;
+    std::vector<RecipeStep> steps;
     std::string name = "";
     uint32_t eating_time = 0;
 };

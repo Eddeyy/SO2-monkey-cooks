@@ -14,11 +14,10 @@
 
 class Monke {
 public:
-    Monke(uint32_t id, Kitchen &kitchen, Recipe recipe)
+    Monke(uint32_t id, Kitchen &kitchen)
     :
             id{id},
-            kitchen{kitchen},
-            recipe{std::move(recipe)} {};
+            kitchen{kitchen} {};
 
     void operator()();
 

@@ -9,7 +9,8 @@ std::vector<std::string> MonkeUtility::splitString(const std::string &input, cha
     std::size_t start = 0;
     std::size_t end = input.find(delimiter);
 
-    while (end != std::string::npos) {
+    while (end != std::string::npos)
+    {
         result.push_back(input.substr(start, end - start));
         start = end + 1;
         end = input.find(delimiter, start);
@@ -24,14 +25,15 @@ std::string MonkeUtility::toLowerCase(const std::string &str)
 {
     std::string result = str;
 
-    for (char& c : result) {
+    for (char &c: result)
+    {
         c = std::tolower(c);
     }
 
     return result;
 }
 
-std::vector<Recipe> MonkeUtility::loadRecipes(const std::string& path) //TODO: handle errors in deserialization
+std::vector<Recipe> MonkeUtility::loadRecipes(const std::string &path) //TODO: handle errors in deserialization
 {
 
     std::vector<Recipe> recipes;
@@ -39,44 +41,40 @@ std::vector<Recipe> MonkeUtility::loadRecipes(const std::string& path) //TODO: h
     std::fstream file;
     file.open(path);
 
-    if(!file.good())
+    if (!file.good())
     {
-        std::cout << "Error opening recipes file." << std::endl;
-        exit(1);
+        throw MonkeException(200, "Error opening recipes file");
     }
 
     std::string line;
 
     std::string recipeName;
-    std::queue<RecipeStep> recipeSteps;
+    std::vector<RecipeStep> recipeSteps;
     uint32_t eating_time;
 
-    while(std::getline(file, line))
+    while (std::getline(file, line))
     {
-        if(line == "#")
+        if (line == "#")
         {
             recipeName = "";
-            for(int i = 0; i < recipeSteps.size(); i++)
-            {
-                recipeSteps.pop();
-            }
+            recipeSteps.clear();
             continue;
         }
 
-        if(line.find("name:") == 0)
+        if (line.find("name:") == 0)
         {
             recipeName = line.substr(5);
             continue;
         }
 
-        if(line.find("steps:") == 0)
+        if (line.find("steps:") == 0)
         {
             std::vector<std::string> steps = splitString(line.substr(6), ',');
 
-            for(auto& s : steps)
+            for (auto &s: steps)
             {
                 auto item = s.substr(1, s.rfind(" ") - 1);
-                recipeSteps.push(RecipeStep{
+                recipeSteps.push_back(RecipeStep{
                         std::stoul(s.substr(s.rfind(' '))),
                         item});
                 s = item;
@@ -84,7 +82,7 @@ std::vector<Recipe> MonkeUtility::loadRecipes(const std::string& path) //TODO: h
             continue;
         }
 
-        if(line.find("eating time:") == 0)
+        if (line.find("eating time:") == 0)
         {
             eating_time = std::stoul(line.substr(line.rfind(' ')));
             Recipe recipe(recipeSteps, eating_time, recipeName);
@@ -97,23 +95,36 @@ std::vector<Recipe> MonkeUtility::loadRecipes(const std::string& path) //TODO: h
     return recipes;
 }
 
-std::vector<std::string> MonkeUtility::loadKitchenItems(const std::string& path) {
+std::vector<std::string> MonkeUtility::loadKitchenItems(const std::string &path)
+{
 
     std::vector<std::string> kitchenItems;
 
     std::ifstream file;
     file.open(path);
-    if(!file.good())
+    if (!file.good())
     {
-        std::cout << "Error opening kitchen items file." << std::endl;
-        exit(1);
+        throw MonkeException(200, "Error opening kitchen items file");
     }
 
     std::string line;
-    while(std::getline(file, line))
+    while (std::getline(file, line))
     {
         kitchenItems.push_back(toLowerCase(line));
     }
 
     return kitchenItems;
+}
+
+void MonkeUtility::verifyItems(const Kitchen& kitchen)
+{
+    auto& items = kitchen.getAvailabilityMap();
+    for (const auto &recipe: kitchen.getRecipes())
+    {
+        for(const auto &step : recipe.getSteps())
+            if(!items.count(step.item))
+            {
+                throw MonkeException(201, "Kitchen items mismatch - no item called " + step.item);
+            }
+    }
 }

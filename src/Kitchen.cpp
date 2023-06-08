@@ -27,3 +27,14 @@ void Kitchen::releaseItem(uint32_t monkeId, std::string& itemName) {
     this->cvs[itemName].notify_all();
     std::cout << "Monke " << monkeId << " finished using " + itemName << "." << std::endl;
 }
+
+Recipe Kitchen::getRandomRecipe()
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> dist(0, this->recipes.size() - 1);
+
+    auto randomIndex = dist(gen);
+    return this->recipes[randomIndex];
+}
+
