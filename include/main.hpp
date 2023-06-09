@@ -12,5 +12,7 @@
 
 #include <Kitchen.hpp>
 #include <Monke.hpp>
+#include <Recipe.hpp>
+#include <MonkeUtility.hpp>
 
 #endif //SO2_MONKEY_COOKS_MAIN_HPP

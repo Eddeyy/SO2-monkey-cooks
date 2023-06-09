@@ -3,51 +3,33 @@
 //
 
 #include <Kitchen.hpp>
+#include <MonkeUtility.hpp>
 
-void Kitchen::useOven(uint32_t monkeId)
-{
-    std::unique_lock<std::mutex> lock(ovenMutex);
-    ovenCV.wait(lock, [&] { return ovenAvailable; });
-    ovenAvailable = false;
-    std::cout << "Chef " << monkeId << " is using the oven." << std::endl;
+
+void Kitchen::useItem(uint32_t monkeId, std::string itemName) {
+    itemName = MonkeUtility::toLowerCase(itemName);
+
+    std::unique_lock<std::mutex> lock(this->mutexes[itemName]);
+    this->cvs[itemName].wait(lock, [&] {
+        if(!this->availability[itemName])
+            std::cout << "Monke " << monkeId << " waiting for " << itemName << "..." << std::endl;
+        return this->availability[itemName]; });
+    this->availability[itemName] = false;
+    std::cout << "Monke " << monkeId << " is using " + itemName << "." << std::endl;
     lock.unlock();
 }
 
-void Kitchen::useMixer(uint32_t monkeId)
-{
-    std::unique_lock<std::mutex> lock(mixerMutex);
-    mixerCV.wait(lock, [&] { return mixerAvailable; });
-    mixerAvailable = false;
-    std::cout << "Chef " << monkeId << " is using the mixer." << std::endl;
-    lock.unlock();
+void Kitchen::releaseItem(uint32_t monkeId, std::string& itemName) {
+    itemName = MonkeUtility::toLowerCase(itemName);
+
+    std::lock_guard<std::mutex> lock(this->mutexes[itemName]);
+    this->availability[itemName] = true;
+    this->cvs[itemName].notify_all();
+    std::cout << "Monke " << monkeId << " finished using " + itemName << "." << std::endl;
 }
 
-void Kitchen::useFridge(uint32_t monkeId)
+Recipe Kitchen::getRandomRecipe()
 {
-    std::unique_lock<std::mutex> lock(fridgeMutex);
-    fridgeCV.wait(lock, [&] { return fridgeAvailable; });
-    fridgeAvailable = false;
-    std::cout << "Chef " << monkeId << " is using the fridge." << std::endl;
-    lock.unlock();
+    return this->recipes[MonkeUtility::getRandomIndex(0, this->recipes.size()-1)];
 }
 
-void Kitchen::releaseOven()
-{
-    std::lock_guard<std::mutex> lock(ovenMutex);
-    ovenAvailable = true;
-    ovenCV.notify_all();
-}
-
-void Kitchen::releaseMixer()
-{
-    std::lock_guard<std::mutex> lock(mixerMutex);
-    mixerAvailable = true;
-    mixerCV.notify_all();
-}
-
-void Kitchen::releaseFridge()
-{
-    std::lock_guard<std::mutex> lock(fridgeMutex);
-    fridgeAvailable = true;
-    fridgeCV.notify_all();
-}

@@ -8,29 +8,43 @@
 #include <iostream>
 #include <mutex>
 #include <condition_variable>
+#include <map>
+#include <vector>
+#include <random>
+
+#include <Recipe.hpp>
 
 class Kitchen {
 public:
-    Kitchen() :
-    ovenAvailable{true},
-    mixerAvailable{true},
-    fridgeAvailable{true}
+    Kitchen(const std::vector<std::string>& items, const std::vector<Recipe>& recipes)
+    : recipes{recipes}
     {
         // constructor body
+        for(const auto& item : items)
+        {
+            availability[item] = true;
+        }
     }
 
-    void useOven(uint32_t monkeId);
-    void useMixer(uint32_t monkeId);
-    void useFridge(uint32_t monkeId);
+    void useItem(uint32_t monkeId, std::string itemName);
+    void releaseItem(uint32_t monkeId, std::string& itemName);
 
-    void releaseOven();
-    void releaseMixer();
-    void releaseFridge();
+    Recipe getRandomRecipe();
+
+    const std::map<std::string, bool>& getAvailabilityMap() const {
+        return this->availability;
+    }
+
+    const std::vector<Recipe> &getRecipes() const
+    {
+        return recipes;
+    }
 
 private:
-    std::mutex ovenMutex, mixerMutex, fridgeMutex;
-    std::condition_variable ovenCV, mixerCV, fridgeCV;
-    bool ovenAvailable, mixerAvailable, fridgeAvailable;
+    std::map<std::string, bool> availability;
+    std::map<std::string, std::mutex> mutexes;
+    std::map<std::string, std::condition_variable> cvs;
+    std::vector<Recipe> recipes;
 };
 
 #endif //SO2_MONKEY_COOKS_KITCHEN_HPP
