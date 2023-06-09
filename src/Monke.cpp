@@ -7,8 +7,7 @@
 
 void Monke::operator()()
 {
-    std::thread hungerThread(&Monke::start_hunger_decrement, this);
-    hungerThread.join();
+    start_hunger_decrement();
 
     while(true)
     {
