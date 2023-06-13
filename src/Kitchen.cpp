@@ -16,7 +16,6 @@ void Kitchen::useItem(uint32_t monkeId, std::string itemName) {
         return this->availability[itemName]; });
     this->availability[itemName] = false;
     std::cout << "Monke " << monkeId << " is using " + itemName << "." << std::endl;
-    lock.unlock();
 }
 
 void Kitchen::releaseItem(uint32_t monkeId, std::string& itemName) {
