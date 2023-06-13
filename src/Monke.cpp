@@ -65,7 +65,6 @@ void Monke::operator()()
 bool Monke::try_help_another()
 {
     this->status = "is looking to help";
-    std::cout << "[HELPING] Monke " << this->id << " " << status << std::endl;
     std::shared_ptr<Monke> monke;
 
     for(auto &m : *allMonkes)
@@ -126,7 +125,6 @@ void Monke::cook()
 
         if (rand() % 3 == 0)
         {
-            std::cout << "Monke " << this->id << " is scratching it's butt" << std::endl;
             this->status = "scratching butt";
             sleep_for(rand() % 3 + 1);
         }
@@ -153,8 +151,6 @@ void Monke::claim_item_for_time(const std::string &itemName, const int32_t& dura
     {
         if (!kitchen.getAvailabilityMap().at(item))
             continue;
-
-        // std::cout << "Monke " << id << " found a free " << itemName << "!" << std::endl;
         itemKeyValue = item;
         break;
     }
@@ -176,8 +172,7 @@ void Monke::start_hunger_decrement()
     std::thread decrementThread([this]() {
         while (true) {
             std::this_thread::sleep_for(std::chrono::seconds(hungering_time)); // Co X sekund;
-            hunger_level = (hunger_level - hunger_depletion_amount > 0) ? hunger_level - hunger_depletion_amount : 0; // Dekrementuj poziom głodu o 10
-            // std::cout << "[HUNGER] Monke " << this->id << " = " << hunger_level << std::endl;
+            hunger_level = (hunger_level - hunger_depletion_amount > 0) ? hunger_level - hunger_depletion_amount : 0; // Dekrementuj poziom głodu
         }
     });
     decrementThread.detach();
@@ -188,7 +183,6 @@ void Monke::sleep_for(const int32_t &seconds)
     this->time_left = seconds;
     while(this->time_left > 0)
     {
-        // std::cout << "[TIMER] Monke " << this->id << " time left "<< this->status << " = " << this->time_left << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
         this->time_left--;
     }
