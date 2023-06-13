@@ -14,6 +14,8 @@
 
 #include <Recipe.hpp>
 
+class Monke;
+
 class Kitchen {
 public:
     Kitchen(const std::vector<std::string>& items, const std::vector<Recipe>& recipes)
@@ -26,8 +28,8 @@ public:
         }
     }
 
-    void useItem(uint32_t monkeId, std::string itemName);
-    void releaseItem(uint32_t monkeId, std::string& itemName);
+    void useItem(uint32_t monkeId, std::string itemName, Monke& monke);
+    void releaseItem(uint32_t monkeId, std::string& itemName, Monke& monke);
 
     Recipe getRandomRecipe();
 

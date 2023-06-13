@@ -38,7 +38,6 @@ void Monke::operator()()
             {
                 cook();
             }
-            this->isBeingHelped = false;
 
             /*
              * Symulacja procesu jedzenia.
@@ -49,6 +48,8 @@ void Monke::operator()()
             auto foodValue = recipe.getValue();
 
             claim_item_for_time("seat", (eatingTime - eatingTime / this->eating_speed), MonkeStatus::eating, foodValue);
+
+            this->recipe.setName("");
 
 
             /**
@@ -63,8 +64,7 @@ void Monke::operator()()
 
 bool Monke::try_help_another()
 {
-    std::unique_lock<std::mutex> lock(mutex);
-    this->status = "is looking to help someone";
+    this->status = "is looking to help";
     std::cout << "[HELPING] Monke " << this->id << " " << status << std::endl;
     std::shared_ptr<Monke> monke;
 
@@ -73,7 +73,7 @@ bool Monke::try_help_another()
         if(m->id == this->id)
             continue;
 
-        if(!m->isCooking && m->isBeingHelped)
+        if(!m->isCooking || m->helpingMonke != nullptr)
             continue;
 
         /*
@@ -82,34 +82,34 @@ bool Monke::try_help_another()
         if(m->recipe.getSteps().size() < m->recipe.getSteps().size()/2)
             continue;
 
+        m->helpingMonke = this;
         monke = m;
         break;
     }
-
-    if(!monke || monke->id == this->id)
+    if(monke == nullptr)
     {
         return false;
     }
 
-    this->status = "is helping monke " + std::to_string(monke->id);
-
-    std::cout << "[HELPING] Monke " << this->id << " " << status << monke->id << std::endl;
-
-    monke->isBeingHelped = true;
+    std::unique_lock<std::mutex> lock(monke->mutex);
 
     for(auto &s : monke->recipe.getSteps())
     {
-        s.secondsDuration = s.secondsDuration/2;
+        s.secondsDuration = s.secondsDuration/2 + 1;
     }
-    monke->time_left = monke->time_left/2;
-    auto newFoodValue = monke->recipe.getValue()*3/2;
-    auto newEatingTime = monke->recipe.getEatingTime()*3/2;
+
+    auto newFoodValue = (monke->recipe.getValue()*2)/3;
+    auto newEatingTime = (monke->recipe.getEatingTime()*2)/3;
 
     monke->recipe.setValue(newFoodValue);
     monke->recipe.setEatingTime(newEatingTime);
 
     this->recipe = Recipe({}, newEatingTime, monke->recipe.getName(), newFoodValue);
-    cv.wait(lock, [this, &monke] {return !monke->isCooking;});
+    cv.wait(lock, [this, &monke] {
+        this->status = "is helping monke " + std::to_string(monke->id);
+        return !monke->isCooking;
+        });
+    lock.unlock();
 
     return true;
 }
@@ -134,6 +134,14 @@ void Monke::cook()
         claim_item_for_time(step.item, step.secondsDuration, MonkeStatus::cooking);
     }
     this->isCooking = false;
+
+
+    if(this->helpingMonke)
+    {
+        this->helpingMonke.load()->cv.notify_one();
+
+    this->helpingMonke = nullptr;
+    }
 }
 
 void Monke::claim_item_for_time(const std::string &itemName, const int32_t& duration, MonkeStatus status, const uint32_t& food_value)
@@ -154,13 +162,12 @@ void Monke::claim_item_for_time(const std::string &itemName, const int32_t& dura
     if(itemKeyValue.empty())
         itemKeyValue = items[MonkeUtility::getRandomIndex(0, items.size() - 1)];
 
-    this->status = "using " + itemKeyValue;
-    kitchen.useItem(id, itemKeyValue);
+    kitchen.useItem(id, itemKeyValue, *this);
 
     sleep_for(duration);
 
     this->hunger_level = (food_value * 10 < 100) ? (hunger_level + food_value * 10) : 100;
-    kitchen.releaseItem(id, itemKeyValue);
+    kitchen.releaseItem(id, itemKeyValue, *this);
     this->status = "NONE";
 }
 
