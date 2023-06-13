@@ -68,9 +68,6 @@ int main() {
 
         for (int i = 0; i < MONKE_NUM; i++)
         {
-            auto chefPtr = std::make_shared<Monke>(i + 1, kitchen, HUNGER_DEPLETION_TIME, HUNGER_DEPLETION_AMOUNT);
-            chefs.emplace_back(chefPtr.get());
-            chefThreads.emplace_back(std::thread([chefPtr]() { (*chefPtr)(); }));
             auto chefPtr = std::make_shared<Monke>(i + 1, kitchen, &chefs, HUNGER_DEPLETION_TIME, HUNGER_DEPLETION_AMOUNT);
             chefs.emplace_back(chefPtr);
             chefThreads.emplace_back([chefPtr]() { (*chefPtr)(); });
