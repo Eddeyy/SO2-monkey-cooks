@@ -148,7 +148,7 @@ std::vector<std::string> MonkeUtility::loadKitchenItems(const std::string &path)
 void MonkeUtility::verifyItems(const Kitchen& kitchen)
 {
     auto& items = kitchen.getAvailabilityMap();
-    for (const auto &recipe: kitchen.getRecipes())
+    for (auto recipe: kitchen.getRecipes())
     {
         for(const auto &step : recipe.getSteps())
             if(MonkeUtility::findKeysWithSubstring(items, step.item).empty())

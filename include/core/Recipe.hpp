@@ -53,7 +53,7 @@ public:
         eating_time = eatingTime;
     }
 
-    const std::vector<RecipeStep> &getSteps() const
+    std::vector<RecipeStep> &getSteps()
     {
         return steps;
     }
@@ -71,6 +71,11 @@ public:
     void setName(const std::string &name)
     {
         Recipe::name = name;
+    }
+
+    void setValue(uint32_t value)
+    {
+        Recipe::value = value;
     }
 
     uint32_t getValue() const
