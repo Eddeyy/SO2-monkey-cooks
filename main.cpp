@@ -12,26 +12,34 @@ void display() {
 
     while (displayOn)
     {
-        clear();
+        erase();
         mvprintw(0,0,"Malpo mlyniarzu, co robisz. Press ESC to exit");
-        mvprintw(1, 0,"______________________________________________________________________________________________________________");
+        mvprintw(1, 0,"_____________________________________________________________________________________________");
+        mvprintw(2, 0,"|____________Monkey_does____________________|_Monkey_hungry_|_______Recipe_______|_Time_left_|");
+        int y = 3;
         for (int i = 0; i < chefs.size(); i++) {
             Monke *monke = chefs[i].get();
-            mvprintw(i+2, 1, "Monke %d", monke->getId());
-            mvprintw(i+2, 0, "|");
-            mvprintw(i+2, 40, "Hungary level:");
-            mvprintw(i+2, 55, "__________");
-            mvprintw(i+2, 15, monke->getStatus().c_str());
+            mvprintw(y, 1, "Monke %d", monke->getId());
+            mvprintw(y, 0, "|");
+            mvprintw(y, 46, "__________");
+            if(y<12)
+                mvprintw(y, 9, monke->getStatus().c_str());
+            else
+                mvprintw(y, 10, monke->getStatus().c_str());
             for(int j=0; j<monke->getHungerLevel(); j++){
-                mvprintw(i+2, 55+(j/10), "#");
+                mvprintw(y, 46+(j/10), "#");
             }
-            mvprintw(i+2, 70, "Recipe:");
-            mvprintw(i+2, 80, monke->getRecipe().getName().c_str());
-            mvprintw(i+2, 100, "%d", monke->getTimeLeft());
-            mvprintw(i+2, 110, "|");
+            mvprintw(y, 57, "%d%%",monke->getHungerLevel());
+            mvprintw(y, 62, monke->getRecipe().getName().c_str());
+            mvprintw(y, 87, "%d", monke->getTimeLeft());
+            mvprintw(y, 44, "|");
+            mvprintw(y, 60, "|");
+            mvprintw(y, 81, "|");
+            mvprintw(y, 93, "|");
+            y++;
         }
 
-        mvprintw(7, 0,"______________________________________________________________________________________________________________");
+        mvprintw(y, 0,"|____________________________________________________________________________________________|");
         refresh();
         usleep(10000);
     }
@@ -89,8 +97,6 @@ int main() {
         std::cout << e.what();
         return 199;
     }
-
-    // displayThread.detach();
 
     endwin();
     return 0;
