@@ -39,6 +39,26 @@ public:
         this->recipe = std::move(recipe);
     };
 
+    std::string getStatus() {
+        return this->status;
+    };
+
+    int32_t getHungerLevel() {
+        return this->hunger_level;
+    };
+
+    Recipe getRecipe() {
+        return this->recipe;
+    };
+
+    int32_t getTimeLeft() {
+        return this->time_left;
+    }
+
+    int32_t getId() {
+        return this->id;
+    }
+
 private:
     uint32_t id;
     Kitchen& kitchen;

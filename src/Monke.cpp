@@ -16,11 +16,11 @@ void Monke::operator()()
          */
         if(this->hunger_level <= 69 + 1)
         {
-            std::cout << "Monke " << this->id << " is hungary..." << std::endl;
+            // std::cout << "Monke " << this->id << " is hungary..." << std::endl;
             this->status = "hungry";
             this->recipe = this->kitchen.getRandomRecipe();
 
-            std::cout << "Monke " << this->id << " is preparing: " << recipe.getName() << std::endl;
+            // std::cout << "Monke " << this->id << " is preparing: " << recipe.getName() << std::endl;
 
             /*
              * Pętla odpowiedzialna za wykonywanie kolejnych kroków.
@@ -34,7 +34,7 @@ void Monke::operator()()
 
                 if (rand() % 3 == 0)
                 {
-                    std::cout << "Monke " << this->id << " is scratching it's butt" << std::endl;
+                    // std::cout << "Monke " << this->id << " is scratching it's butt" << std::endl;
                     this->status = "scratching butt";
                     sleep_for(rand() % 3 + 1);
                 }
@@ -45,7 +45,7 @@ void Monke::operator()()
             /*
              * Symulacja procesu jedzenia.
              * */
-            std::cout << "Monke " << this->id << " is eating his " << recipe.getName() << "..." << std::endl;
+            // std::cout << "Monke " << this->id << " is eating his " << recipe.getName() << "..." << std::endl;
 
             auto eatingTime = recipe.getEatingTime();
             auto foodValue = recipe.getValue();
@@ -56,7 +56,7 @@ void Monke::operator()()
             /**
              * Odpoczynek po gotowaniu i zjedzeniu.
              */
-            std::cout << "Monke " << this->id << " finished eating! Time to rest." << std::endl;
+            // std::cout << "Monke " << this->id << " finished eating! Time to rest." << std::endl;
             this->status = "resting";
             sleep_for(foodValue);
         }
@@ -73,7 +73,7 @@ void Monke::claim_item_for_time(const std::string &itemName, const int32_t& dura
         if (!kitchen.getAvailabilityMap().at(item))
             continue;
 
-        std::cout << "Monke " << id << " found a free " << itemName << "!" << std::endl;
+        // std::cout << "Monke " << id << " found a free " << itemName << "!" << std::endl;
         itemKeyValue = item;
         break;
     }
@@ -97,7 +97,7 @@ void Monke::start_hunger_decrement()
         while (true) {
             std::this_thread::sleep_for(std::chrono::seconds(hungering_time)); // Co X sekund;
             hunger_level = (hunger_level - hunger_depletion_amount > 0) ? hunger_level - hunger_depletion_amount : 0; // Dekrementuj poziom głodu o 10
-            std::cout << "[HUNGER] Monke " << this->id << " = " << hunger_level << std::endl;
+            // std::cout << "[HUNGER] Monke " << this->id << " = " << hunger_level << std::endl;
         }
     });
     decrementThread.detach();
@@ -108,7 +108,7 @@ void Monke::sleep_for(const int32_t &seconds)
     this->time_left = seconds;
     while(this->time_left > 0)
     {
-        std::cout << "[TIMER] Monke " << this->id << " time left "<< this->status << " = " << this->time_left << std::endl;
+        // std::cout << "[TIMER] Monke " << this->id << " time left "<< this->status << " = " << this->time_left << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(1));
         this->time_left--;
     }
