@@ -38,6 +38,7 @@ void Monke::operator()()
             {
                 cook();
             }
+            this->isBeingHelped = false;
 
             /*
              * Symulacja procesu jedzenia.
@@ -62,13 +63,14 @@ void Monke::operator()()
 
 bool Monke::try_help_another()
 {
+    std::unique_lock<std::mutex> lock(mutex);
     this->status = "is looking to help someone";
     std::cout << "[HELPING] Monke " << this->id << " " << status << std::endl;
     std::shared_ptr<Monke> monke;
 
     for(auto &m : *allMonkes)
     {
-        if(m.get() == this)
+        if(m->id == this->id)
             continue;
 
         if(!m->isCooking && m->isBeingHelped)
@@ -84,12 +86,12 @@ bool Monke::try_help_another()
         break;
     }
 
-    if(!monke)
+    if(!monke || monke->id == this->id)
     {
         return false;
     }
 
-    this->status = &"is helping monke " [ monke->id];
+    this->status = "is helping monke " + std::to_string(monke->id);
 
     std::cout << "[HELPING] Monke " << this->id << " " << status << monke->id << std::endl;
 
@@ -106,10 +108,9 @@ bool Monke::try_help_another()
     monke->recipe.setValue(newFoodValue);
     monke->recipe.setEatingTime(newEatingTime);
 
-    std::unique_lock<std::mutex> lock(mutex);
+    this->recipe = Recipe({}, newEatingTime, monke->recipe.getName(), newFoodValue);
     cv.wait(lock, [this, &monke] {return !monke->isCooking;});
 
-    this->recipe = Recipe({}, newEatingTime, monke->recipe.getName(), newFoodValue);
     return true;
 }
 
