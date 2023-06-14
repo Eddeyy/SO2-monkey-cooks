@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.22)
 set(CMAKE_CXX_STANDARD 17)
 
 project(SO2_monkey_cooks)
@@ -20,4 +20,8 @@ add_custom_target(copy_resources ALL
 add_dependencies(SO2_monkey_cooks copy_resources)
 
 target_link_libraries(SO2_monkey_cooks SO2)
+
+find_package( Curses REQUIRED )
+include_directories( ${CURSES_INCLUDE_DIRS} )
+target_link_libraries( SO2_monkey_cooks ${CURSES_LIBRARIES} )
 

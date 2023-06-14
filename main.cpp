@@ -1,8 +1,50 @@
 #include <iostream>
 #include <main.hpp>
+#include <ncurses.h>
+#include <unistd.h>
 
-
+bool displayOn = true;
 std::vector<std::shared_ptr<Monke>> chefs;
+
+
+void display() {
+    noecho();
+
+    while (displayOn)
+    {
+        erase();
+        mvprintw(0,0,"Malpo mlyniarzu, co robisz. Press ESC to exit");
+        mvprintw(1, 0,"_____________________________________________________________________________________________");
+        mvprintw(2, 0,"|____________Monkey_does____________________|_Monkey_hungry_|_______Recipe_______|_Time_left_|");
+        int y = 3;
+        for (int i = 0; i < chefs.size(); i++) {
+            Monke *monke = chefs[i].get();
+            mvprintw(y, 1, "Monke %d", monke->getId());
+            mvprintw(y, 0, "|");
+            mvprintw(y, 46, "__________");
+            if(y<12)
+                mvprintw(y, 9, monke->getStatus().c_str());
+            else
+                mvprintw(y, 10, monke->getStatus().c_str());
+            for(int j=0; j<monke->getHungerLevel(); j++){
+                mvprintw(y, 46+(j/10), "#");
+            }
+            mvprintw(y, 57, "%d%%",monke->getHungerLevel());
+            mvprintw(y, 62, monke->getRecipe().getName().c_str());
+            mvprintw(y, 87, "%d", monke->getTimeLeft());
+            mvprintw(y, 44, "|");
+            mvprintw(y, 60, "|");
+            mvprintw(y, 81, "|");
+            mvprintw(y, 93, "|");
+            y++;
+        }
+
+        mvprintw(y, 0,"|____________________________________________________________________________________________|");
+        refresh();
+        usleep(10000);
+    }
+
+}
 
 int main() {
 
@@ -16,6 +58,13 @@ int main() {
     std::cin >> HUNGER_DEPLETION_TIME;
     std::cout << "\nProvide hunger depletion value (from 1 to 99): ";
     std::cin >> HUNGER_DEPLETION_AMOUNT;
+
+    initscr();
+    cbreak();
+    refresh();
+
+    std::thread displayThread(display);
+
     try
     {
 
@@ -49,5 +98,6 @@ int main() {
         return 199;
     }
 
+    endwin();
     return 0;
 }
