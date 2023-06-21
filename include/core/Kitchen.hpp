@@ -11,6 +11,7 @@
 #include <map>
 #include <vector>
 #include <random>
+#include <algorithm>
 
 #include <Recipe.hpp>
 
@@ -22,11 +23,18 @@ public:
     : recipes{recipes}
     {
         // constructor body
-        for(const auto& item : items)
+        for(auto item : items)
         {
             availability[item] = true;
+            itemTimesUsed[item] = 0;
+
+            
+            itemAmount[item] = itemAmount.find(item.erase(item.rfind(' '))) != itemAmount.end()? itemAmount[item] + 1 : 1;
+            itemMonkeId[item] = -1;
         }
+
     }
+
 
     void useItem(uint32_t monkeId, std::string itemName, Monke& monke);
     void releaseItem(uint32_t monkeId, std::string& itemName, Monke& monke);
@@ -42,10 +50,44 @@ public:
         return recipes;
     }
 
+    const std::map<std::string, uint32_t>& getItemTimesUsed() 
+    {
+        return this->itemTimesUsed;
+    }
+
+    const std::map<std::string, uint32_t>& getItemAmount()
+    {
+        return this->itemAmount;
+    }
+
+    const std::map<std::string, int>& getItemMonkeId()
+    {
+        return this->itemMonkeId;
+    }
+
+    const std::map<std::string, uint32_t> getHowManyUsedRightNow()
+    {
+        std::map<std::string, uint32_t> kitchenItems;
+        for(const auto& item : itemAmount)
+        {
+            kitchenItems[item.first] =  std::count_if(availability.begin(), availability.end(), [&item](const std::pair<std::string, uint32_t>& pair)
+            {
+                return pair.first.find(item.first) != std::string::npos && pair.second != true;
+            });
+        }
+        return kitchenItems;
+    }
+
 private:
     std::map<std::string, bool> availability;
     std::map<std::string, std::mutex> mutexes;
     std::map<std::string, std::condition_variable> cvs;
+
+    //stats
+    std::map<std::string, uint32_t> itemTimesUsed;
+    std::map<std::string, uint32_t> itemAmount;
+    std::map<std::string, int> itemMonkeId;
+
     std::vector<Recipe> recipes;
 };
 

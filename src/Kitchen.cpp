@@ -15,7 +15,8 @@ void Kitchen::useItem(uint32_t monkeId, std::string itemName, Monke& monke) {
         monke.setStatus("is waiting for " + itemName);
         return this->availability[itemName]; });
     this->availability[itemName] = false;
-
+    this->itemMonkeId[itemName] = monke.getId();
+    this->itemTimesUsed[itemName]++;
     monke.setStatus("is using " + itemName);
 }
 
@@ -24,6 +25,7 @@ void Kitchen::releaseItem(uint32_t monkeId, std::string& itemName, Monke& monke)
 
     std::lock_guard<std::mutex> lock(this->mutexes[itemName]);
     this->availability[itemName] = true;
+    this->itemMonkeId[itemName] = -1;
     this->cvs[itemName].notify_all();
 }
 

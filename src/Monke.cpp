@@ -58,6 +58,7 @@ void Monke::operator()()
             // std::cout << "Monke " << this->id << " finished eating! Time to rest." << std::endl;
             this->status = "resting";
             sleep_for(foodValue);
+            this->status = "idle";
         }
     }
 }
@@ -162,7 +163,7 @@ void Monke::claim_item_for_time(const std::string &itemName, const int32_t& dura
 
     sleep_for(duration);
 
-    this->hunger_level = (food_value * 10 < 100) ? (hunger_level + food_value * 10) : 100;
+    this->hunger_level = (hunger_level + food_value * 10 < 100) ? (hunger_level + food_value * 10) : 100;
     kitchen.releaseItem(id, itemKeyValue, *this);
     this->status = "NONE";
 }

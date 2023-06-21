@@ -7,10 +7,20 @@
 =
 name:Toast
 steps: fridge 1, cutting board 1, toaster 1, oven 1
-eating time: 8
+eating time: 3
 value: 5
 =
 name:Chinese soup
 steps: cutting board 5, kettle 5, stove 5
-eating time: 8
+eating time: 2
 value: 3
+=
+name:Omelette
+steps: fridge 3, bowl 8, stove 4
+eating time: 6
+value: 8
+=
+name:Rice chicken
+steps: fridge 6, cutting board 9, bowl 4, stove 10
+eating time: 8
+value: 10

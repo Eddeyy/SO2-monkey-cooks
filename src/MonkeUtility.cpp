@@ -127,6 +127,7 @@ std::vector<std::string> MonkeUtility::loadKitchenItems(const std::string &path)
         {
             amount = std::stoi(line.substr(line.rfind(' ')));
             line.erase(line.rfind(' '));
+            
         }
         catch(std::exception& e)
         {

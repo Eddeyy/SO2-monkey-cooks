@@ -6,8 +6,7 @@
 bool displayOn = true;
 std::vector<std::shared_ptr<Monke>> chefs;
 
-
-void display() {
+void display(Kitchen& kitchen) {
     noecho();
 
     while (displayOn)
@@ -40,6 +39,11 @@ void display() {
         }
 
         mvprintw(y, 0,"|____________________________________________________________________________________________|");
+        auto itemAmount = kitchen.getItemAmount();
+            for (auto& pair : kitchen.getHowManyUsedRightNow())
+            {
+                mvprintw(++y, 1,"%ss: %d/%d", pair.first.c_str(), pair.second, itemAmount[pair.first]);
+            }
         refresh();
         usleep(10000);
     }
@@ -63,14 +67,14 @@ int main() {
     cbreak();
     refresh();
 
-    std::thread displayThread(display);
+    Kitchen kitchen = Kitchen(MonkeUtility::loadKitchenItems(), MonkeUtility::loadRecipes());
+    std::thread displayThread(display, std::ref(kitchen));
 
     try
     {
 
         srand(time(NULL));
 
-        Kitchen kitchen(MonkeUtility::loadKitchenItems(), MonkeUtility::loadRecipes());
         std::vector<std::thread> chefThreads;
         MonkeUtility::verifyItems(kitchen);
 

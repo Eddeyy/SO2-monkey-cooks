@@ -79,7 +79,7 @@ private:
     int32_t hungering_time;
     int32_t hunger_depletion_amount;
     std::atomic<int32_t> time_left = 0;
-    std::string status = "NONE";
+    std::string status = "idle";
 
     std::mutex mutex;
     std::condition_variable cv;
