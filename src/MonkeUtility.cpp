@@ -38,8 +38,7 @@ std::vector<Recipe> MonkeUtility::loadRecipes(const std::string &path) //TODO: h
 
     std::vector<Recipe> recipes;
 
-    std::fstream file;
-    file.open(path);
+    std::fstream file(path);
 
     if (!file.good())
     {
@@ -109,8 +108,7 @@ std::vector<std::string> MonkeUtility::loadKitchenItems(const std::string &path)
 
     std::vector<std::string> kitchenItems;
 
-    std::ifstream file;
-    file.open(path);
+    std::ifstream file(path);
     if (!file.good())
     {
         throw MonkeException(200, "Error opening kitchen items file");
@@ -119,29 +117,24 @@ std::vector<std::string> MonkeUtility::loadKitchenItems(const std::string &path)
     std::string line;
     while (std::getline(file, line))
     {
-        if(line.find('#') != std::string::npos || line.empty())
+        if (line.empty() || line[0] == '#')
             continue;
 
-        int amount = 0;
-        try
+        auto pos = line.find_last_of(' ');
+        if (pos != std::string::npos)
         {
-            amount = std::stoi(line.substr(line.rfind(' ')));
-            line.erase(line.rfind(' '));
-            
+            int amount = std::stoi(line.substr(pos + 1));
+            std::string itemName = line.substr(0, pos);
+            toLowerCase(itemName);
+            for(int i = 0; i < amount; i ++)
+                kitchenItems.push_back((amount > 1) ? (itemName + " " + std::to_string(i)) : itemName);
         }
-        catch(std::exception& e)
-        {
-        }
-
-        if(amount)
-            for(int i = 0; i < amount; i++)
-            {
-                auto temp = line + " " + std::to_string(i + 1);
-                kitchenItems.push_back(toLowerCase(temp));
-            }
         else
-            kitchenItems.push_back(toLowerCase(line));
+        {
+            kitchenItems.push_back(line);
+        }
     }
+
 
     return kitchenItems;
 }

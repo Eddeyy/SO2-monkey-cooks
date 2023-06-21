@@ -60,7 +60,7 @@ public:
     int32_t getTimeLeft() {
         return this->time_left;
     }
-
+    
     int32_t getId() {
         return this->id;
     }
@@ -92,7 +92,12 @@ private:
 
     void cook();
     bool try_help_another();
-
+    void eat_and_rest();
+    std::shared_ptr<Monke> findAvailableMonkeToHelp();
+    void adjustRecipeForHelping(const std::shared_ptr<Monke>& monke);
+    void waitForMonkeToFinishCooking(const std::shared_ptr<Monke>& monke, std::unique_lock<std::mutex>& lock);
+    bool should_search_for_recipe();
+    bool should_help_another_monke();
     void claim_item_for_time(const std::string &itemName, const int32_t& duration, MonkeStatus status, const uint32_t& food_value = 0);
     void start_hunger_decrement();
     void sleep_for(const int32_t& seconds);
