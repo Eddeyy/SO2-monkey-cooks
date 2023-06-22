@@ -125,13 +125,12 @@ std::vector<std::string> MonkeUtility::loadKitchenItems(const std::string &path)
         {
             int amount = std::stoi(line.substr(pos + 1));
             std::string itemName = line.substr(0, pos);
-            toLowerCase(itemName);
-            for(int i = 0; i < amount; i ++)
-                kitchenItems.push_back((amount > 1) ? (itemName + " " + std::to_string(i)) : itemName);
+            for(int i = 0; i < amount; i++)
+                kitchenItems.push_back((amount > 1) ? (toLowerCase(itemName) + " " + std::to_string(i+1)) : toLowerCase(itemName));
         }
         else
         {
-            kitchenItems.push_back(line);
+            kitchenItems.push_back(toLowerCase(line));
         }
     }
 

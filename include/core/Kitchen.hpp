@@ -29,11 +29,14 @@ public:
 
     const std::map<std::string, bool>& getAvailabilityMap() const;
     const std::vector<Recipe> &getRecipes() const;
-    const std::map<std::string, uint32_t>& getItemTimesUsed();
+    const std::map<std::string, uint32_t> getItemTimesUsed(std::string itemName);
     const std::map<std::string, uint32_t>& getItemAmount();
-    const std::map<std::string, int>& getItemMonkeId();
+    const std::map<std::string, int> getItemMonkeId(std::string itemName);
     const std::map<std::string, uint32_t> getHowManyUsedRightNow();
 
+    std::vector<std::pair<int, int>> getHelpingMonkes(const std::vector<std::shared_ptr<Monke>>& monkes);
+
+    uint32_t helpingMonkes = 0;
 private:
 
     // Kitchen item mutexes

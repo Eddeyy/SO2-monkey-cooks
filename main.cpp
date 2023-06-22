@@ -40,10 +40,26 @@ void display(Kitchen& kitchen) {
 
         mvprintw(y, 0,"|____________________________________________________________________________________________|");
         auto itemAmount = kitchen.getItemAmount();
-            for (auto& pair : kitchen.getHowManyUsedRightNow())
+        for (auto& pair : kitchen.getHowManyUsedRightNow())
+        {
+            mvprintw(++y, 1,"%ss: %d/%d", pair.first.c_str(), pair.second, itemAmount[pair.first]);
+        }
+
+        mvprintw(++y, 1, "Helping monkes: %d", kitchen.helpingMonkes);
+
+        for (auto& monkePair : kitchen.getHelpingMonkes(chefs))
+        {
+            mvprintw(++y, 1,"Monke %d is helping monke %d", monkePair.first, monkePair.second);
+        }
+
+        for(auto& monke : chefs)
+        {
+            for(auto& pair : monke->getTimesUsingItem())
             {
-                mvprintw(++y, 1,"%ss: %d/%d", pair.first.c_str(), pair.second, itemAmount[pair.first]);
+                mvprintw(++y, 1, "Monke %d used %s : %d times", monke->getId(), pair.first.c_str(), pair.second);
             }
+        }
+
         refresh();
         usleep(10000);
     }
