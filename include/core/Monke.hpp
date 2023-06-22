@@ -70,6 +70,26 @@ public:
         this->status = status;
     }
 
+    bool isHelping()
+    {
+        return this->status.find("helping") != std::string::npos;
+    }
+
+    int getHelpedMonkeId()
+    {
+        return this->helpedMonkeId;
+    }
+
+    int getHelpingMonkeId()
+    {
+        return this->helpingMonke? helpingMonke.load()->getId() : -1;
+    }
+
+    const std::map<std::string, uint32_t>& getTimesUsingItem()
+    {
+        return this->timesUsingItem;
+    }
+
 private:
     uint32_t id;
     Kitchen& kitchen;
@@ -81,12 +101,17 @@ private:
     std::atomic<int32_t> time_left = 0;
     std::string status = "idle";
 
+    std::map<std::string, uint32_t> timesUsingItem;
+
     std::mutex mutex;
     std::condition_variable cv;
 
     std::vector<std::shared_ptr<Monke>>* allMonkes;
 
     std::atomic<Monke*> helpingMonke = nullptr;
+    
+    int helpedMonkeId = -1;
+
     bool isBeingHelped = false;
     bool isCooking = false;
 

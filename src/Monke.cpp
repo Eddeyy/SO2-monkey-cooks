@@ -30,7 +30,7 @@ bool Monke::should_search_for_recipe()
 
 bool Monke::should_help_another_monke()
 {
-    return rand() % 2 == 0;
+    return rand() % 3 == 0;
 }
 
 bool Monke::try_help_another()
@@ -85,10 +85,13 @@ void Monke::adjustRecipeForHelping(const std::shared_ptr<Monke>& monke)
 
 void Monke::waitForMonkeToFinishCooking(const std::shared_ptr<Monke>& monke, std::unique_lock<std::mutex>& lock)
 {
+    this->kitchen.helpingMonkes++;
+    this->helpedMonkeId = monke->id;
     this->status = "is helping monke " + std::to_string(monke->id);
     cv.wait(lock, [&monke] {
         return !monke->isCooking;
     });
+    this->kitchen.helpingMonkes--;
 }
 
 void Monke::cook()
@@ -133,6 +136,7 @@ void Monke::eat_and_rest()
 
 void Monke::claim_item_for_time(const std::string& itemName, const int32_t& duration, MonkeStatus status, const uint32_t& food_value)
 {
+
     auto items = MonkeUtility::findKeysWithSubstring(kitchen.getAvailabilityMap(), itemName);
     std::string itemKeyValue;
 
@@ -148,6 +152,8 @@ void Monke::claim_item_for_time(const std::string& itemName, const int32_t& dura
         itemKeyValue = items[MonkeUtility::getRandomIndex(0, items.size() - 1)];
 
     kitchen.useItem(id, itemKeyValue, *this);
+
+    this->timesUsingItem[itemName] = timesUsingItem.find(itemName) != timesUsingItem.end()? timesUsingItem[itemName] + 1 : 1;
 
     sleep_for(duration);
 

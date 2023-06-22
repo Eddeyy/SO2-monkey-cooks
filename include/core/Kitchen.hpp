@@ -34,6 +34,9 @@ public:
     const std::map<std::string, int>& getItemMonkeId();
     const std::map<std::string, uint32_t> getHowManyUsedRightNow();
 
+    std::vector<std::pair<int, int>> getHelpingMonkes(const std::vector<std::shared_ptr<Monke>>& monkes);
+
+    uint32_t helpingMonkes = 0;
 private:
 
     // Kitchen item mutexes

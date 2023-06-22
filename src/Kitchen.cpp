@@ -18,8 +18,9 @@ Kitchen::Kitchen(
         availability[item] = true;
         itemTimesUsed[item] = 0;
 
+        auto onlyItemName = item.rfind(' ') != std::string::npos? item.erase(item.rfind(' ')) : item;
         
-        itemAmount[item] = itemAmount.find(item) != itemAmount.end()? itemAmount[item] + 1 : 1;
+        itemAmount[item] = itemAmount.find(onlyItemName) != itemAmount.end()? itemAmount[onlyItemName] + 1 : 1;
         itemMonkeId[item] = -1;
     }
 
@@ -88,4 +89,19 @@ const std::map<std::string, uint32_t> Kitchen::getHowManyUsedRightNow()
         });
     }
     return kitchenItems;
+}
+
+std::vector<std::pair<int, int>> Kitchen::getHelpingMonkes(const std::vector<std::shared_ptr<Monke>>& monkes)
+{
+    std::vector<std::pair<int, int>> helpingMonkes;
+
+    for(const auto& monke : monkes)
+    {
+        if(monke.get()->isHelping())
+        {
+            helpingMonkes.emplace_back(std::pair<int, int>(monke.get()->getId(), monke.get()->getHelpedMonkeId()));
+        }
+    }
+
+    return helpingMonkes;
 }
