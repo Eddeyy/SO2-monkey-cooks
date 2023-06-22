@@ -166,7 +166,7 @@ void Monke::start_hunger_decrement()
 {
     std::thread decrementThread([this]() {
         while (true) {
-            int how_much_to_hunger = hunger_depletion_amount + rand() % 10 - hunger_depletion_amount / 2;
+            int how_much_to_hunger = hunger_depletion_amount / 2 + rand() % (int) (hunger_depletion_amount * 1.5);
             std::this_thread::sleep_for(std::chrono::seconds(hungering_time));
             hunger_level = (hunger_level - how_much_to_hunger > 0) ? hunger_level - how_much_to_hunger : 0;
         }
