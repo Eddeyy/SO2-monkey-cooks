@@ -11,7 +11,9 @@ void display(Kitchen &kitchen)
     noecho();
 
     bool isMonkeyDesc = false;
+    bool isItemDesc = false;
     int monkeClicked = 0;
+    std::string itemClicked = "";
     int ch = 0;
 
     while (displayOn)
@@ -32,6 +34,16 @@ void display(Kitchen &kitchen)
             {
                 isMonkeyDesc = false;
                 monkeClicked = 0;
+                if (mEvent.y < chefs.size() + 5 + kitchen.getItemAmount().size() && mEvent.y > chefs.size() + 4)
+                {
+                    isItemDesc = true;
+                    itemClicked = kitchen.getItemAmount().at(mEvent.y - (chefs.size() + 5)).first;
+                }
+                else
+                {
+                    isItemDesc = false;
+                    itemClicked = "";
+                }
             }
         }
 
@@ -80,12 +92,25 @@ void display(Kitchen &kitchen)
                 mvprintw(y, 93, "|");
             }
         }
+        else if (isItemDesc)
+        {
+            mvprintw(y, 14, "%s_usage", itemClicked.c_str());
+            for (int i = 0; i < kitchen.getItemAmount(itemClicked); i++)
+            {
+                std::string itemFullName = itemClicked + " " + std::to_string(i+1);
+                mvprintw(++y, 1, "%s was used %d times", itemFullName.c_str(), kitchen.getItemTimesUsed(itemFullName));
+                mvprintw(y, 0, "|");
+                mvprintw(y, 44, "|");
+                mvprintw(y, 93, "|");
+            }
+            
+        }
         else
         {
             mvprintw(y, 14, "All_kitchen_items");
             for (auto &pair : kitchen.getHowManyUsedRightNow())
             {
-                mvprintw(++y, 1, "%ss: %d/%d", pair.first.c_str(), pair.second, itemAmount[pair.first]);
+                mvprintw(++y, 1, "%ss: %d/%d", pair.first.c_str(), pair.second, itemAmount.at((y - (chefs.size() + 4))).second);
                 mvprintw(y, 0, "|");
                 mvprintw(y, 44, "|");
                 mvprintw(y, 93, "|");

@@ -63,34 +63,31 @@ const std::vector<Recipe> &Kitchen::getRecipes() const
     return recipes;
 }
 
-const std::map<std::string, uint32_t> Kitchen::getItemTimesUsed(std::string itemName) 
+const uint32_t Kitchen::getItemTimesUsed(std::string itemName) 
 {
-    std::map<std::string, uint32_t> filteredMap;
-
-    for(const auto& pair : itemTimesUsed)
-    {
-        if(pair.first.find(itemName) != std::string::npos)
-        filteredMap.insert(pair);
-    }
-    return filteredMap;
+    return itemTimesUsed[itemName];
 }
 
-const std::map<std::string, uint32_t>& Kitchen::getItemAmount()
+const std::vector<std::pair<std::string, uint32_t>> Kitchen::getItemAmount()
 {
-    return this->itemAmount;
+    std::vector<std::pair<std::string, uint32_t>> items;
+    for (const auto & item : itemAmount)
+    {
+        items.emplace_back(item);
+    }
+    
+    return items;
 }
 
-const std::map<std::string, int> Kitchen::getItemMonkeId(std::string itemName)
+const uint32_t Kitchen::getItemAmount(std::string name)
+{   
+    return itemAmount[name];
+}
+
+const int Kitchen::getItemMonkeId(std::string itemName)
 {
-    std::map<std::string, int> filteredMap;
 
-    for(const auto& pair : itemMonkeId)
-    {
-        if(pair.first.find(itemName) != std::string::npos)
-        filteredMap.insert(pair);
-    }
-
-    return filteredMap;
+    return itemMonkeId[itemName];
 }
 
 const std::map<std::string, uint32_t> Kitchen::getHowManyUsedRightNow()
