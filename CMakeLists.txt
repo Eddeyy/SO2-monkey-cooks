@@ -8,7 +8,7 @@ include_directories(include)
 include_directories(include/core)
 
 add_subdirectory(src)
-add_executable(SO2_monkey_cooks main.cpp include/core/MonkeUtility.hpp)
+add_executable(SO2_monkey_cooks main.cpp)
 
 # KOPIOWANIE_FOLDER_RESOURCES (żeby nie trzeba było edytować w folderze build przy każdym debugowaniu)
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/resources)

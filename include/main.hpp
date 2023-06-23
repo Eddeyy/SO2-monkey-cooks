@@ -9,10 +9,13 @@
 #include <mutex>
 #include <condition_variable>
 #include <vector>
+#include <ncurses.h>
+#include <unistd.h>
 
 #include <Kitchen.hpp>
 #include <Monke.hpp>
 #include <Recipe.hpp>
 #include <MonkeUtility.hpp>
+#include <MonkeDisplay.hpp>
 
 #endif //SO2_MONKEY_COOKS_MAIN_HPP
